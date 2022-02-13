@@ -1,0 +1,193 @@
+Arrays:
+
+
+[training@localhost ~]$ cat>array.csv
+Madhu,123,Math$Chemistry$Physics
+Kiran,456,Biology$Math$Science
+Ctrl+d
+
+
+
+hive> use details;
+OK
+Time taken: 2.058 seconds
+hive> create table array_table(sname string,sid int,sub array<string>) row format delimited fields terminated by ',' collection items terminated by '$';
+OK
+Time taken: 0.511 seconds
+hive> describe array_table;
+OK
+sname   string
+sid     int
+sub     array<string>
+Time taken: 0.265 seconds
+hive> load data local inpath '/home/training/array.csv' into table array_table;
+Copying data from file:/home/training/array.csv
+Copying file: file:/home/training/array.csv
+Loading data to table details.array_table
+Table details.array_table stats: [num_partitions: 0, num_files: 1, num_rows: 0, total_size: 64, raw_data_size: 0]
+OK
+Time taken: 0.401 seconds
+hive> select * from array_table;
+OK
+Madhu   123     ["Math","Chemistry","Physics"]
+Kiran   456     ["Biology","Math","Science"]
+Time taken: 0.263 seconds
+hive> select sname,sid,sub[0],sub[1],sub[2] from array_table;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201704160624_0008, Tracking URL = http://localhost:50030/jobdetails.jsp?jobid=job_201704160624_0008
+Kill Command = /usr/local/hadoop/libexec/../bin/hadoop job  -kill job_201704160624_0008
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2017-04-16 08:10:15,674 Stage-1 map = 0%,  reduce = 0%
+2017-04-16 08:10:21,719 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.28 sec
+2017-04-16 08:10:22,728 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.28 sec
+2017-04-16 08:10:23,736 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.28 sec
+2017-04-16 08:10:24,746 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.28 sec
+2017-04-16 08:10:25,754 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.28 sec
+2017-04-16 08:10:26,760 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.28 sec
+2017-04-16 08:10:27,767 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 0.28 sec
+MapReduce Total cumulative CPU time: 280 msec
+Ended Job = job_201704160624_0008
+MapReduce Jobs Launched:
+Job 0: Map: 1   Cumulative CPU: 0.28 sec   HDFS Read: 293 HDFS Write: 64 SUCCESS
+Total MapReduce CPU Time Spent: 280 msec
+OK
+Madhu   123     Math    Chemistry       Physics
+Kiran   456     Biology Math    Science
+Time taken: 20.94 seconds
+
+
+Map:
+
+ cat > map.csv
+[training@localhost ~]$ cat>map.csv
+ravi,123,salary#5000$comm#2000,10
+ramesh,456,salary#4000$comm#1000,30
+rakesh,789,slary#3000$comm#3000,20
+
+Ctrl+d
+
+> use details;
+OK
+Time taken: 1.944 seconds
+hive> create table map_table(ename string,eid int,paydetails map<string,double>,deptno int)
+    > row format delimited fields terminated by ',' collection items
+    > terminated by '$' map keys terminated by '#';
+OK
+Time taken: 0.487 seconds
+hive> describe map_table;
+OK
+ename   string
+eid     int
+paydetails      map<string,double>
+deptno  int
+Time taken: 0.25 seconds
+
+hive> load data local inpath '/home/training/map.csv' into table map_table;
+Copying data from file:/home/training/map.csv
+Copying file: file:/home/training/map.csv
+Loading data to table details.map_table
+Table details.map_table stats: [num_partitions: 0, num_files: 1, num_rows: 0, total_size: 105, raw_data_size: 0]
+OK
+Time taken: 0.376 seconds
+
+hive> select * from map_table;
+OK
+ravi    123     {"salary":5000.0,"comm":2000.0} 10
+ramesh  456     {"salary":4000.0,"comm":1000.0} 30
+rakesh  789     {"slary":3000.0,"comm":3000.0}  20
+Time taken: 0.097 seconds
+
+
+hive> select ename,eid,paydetails["salary"],paydetails["comm"] from map_table;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201704160624_0009, Tracking URL = http://localhost:50030/jobdetails.jsp?jobid=job_201704160624_0009
+Kill Command = /usr/local/hadoop/libexec/../bin/hadoop job  -kill job_201704160624_0009
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2017-04-16 08:27:53,564 Stage-1 map = 0%,  reduce = 0%
+2017-04-16 08:27:59,614 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.31 sec
+2017-04-16 08:28:00,623 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.31 sec
+2017-04-16 08:28:01,638 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.31 sec
+2017-04-16 08:28:02,652 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.31 sec
+2017-04-16 08:28:03,662 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.31 sec
+2017-04-16 08:28:04,677 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 0.31 sec
+MapReduce Total cumulative CPU time: 310 msec
+Ended Job = job_201704160624_0009
+MapReduce Jobs Launched:
+Job 0: Map: 1   Cumulative CPU: 0.31 sec   HDFS Read: 330 HDFS Write: 69 SUCCESS
+Total MapReduce CPU Time Spent: 310 msec
+OK
+ravi    123     5000.0  2000.0
+ramesh  456     4000.0  1000.0
+rakesh  789     NULL    3000.0
+Time taken: 19.579 seconds
+
+
+Struct:
+
+cat>struct.csv
+ravi,123,456$camebridgestreet$england$uk
+ramesh,456,789$Dolanway$Indiana$USA
+
+CTRL+d
+
+[training@localhost ~]$
+[training@localhost ~]$ vi struct.csv  --> to edit data in .csv file
+then type :wq to save the changes
+
+
+
+    > use details
+    > ;
+OK
+Time taken: 1.917 seconds
+
+
+hive> create table struct_table(ename string,eid int,address struct <hno:int,street:string,loc:string,country:string>,dept string)
+row format delimited fields terminated by ',' collection items terminated by '$';
+OK
+Time taken: 0.51 seconds
+
+hive> load data local inpath '/home/training/struct.csv' into table struct_table;   
+ Copying data from file:/home/training/struct.csv
+Copying file: file:/home/training/struct.csv
+Loading data to table details.struct_table
+Table details.struct_table stats: [num_partitions: 0, num_files: 1, num_rows: 0, total_size: 77, raw_data_size: 0]
+OK
+Time taken: 0.482 seconds
+
+
+
+hive> select ename,eid,address.hno,address.street,address.country from struct_table;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201704160624_0010, Tracking URL = http://localhost:50030/jobdetails.jsp?jobid=job_201704160624_0010
+Kill Command = /usr/local/hadoop/libexec/../bin/hadoop job  -kill job_201704160624_0010
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2017-04-16 08:41:45,622 Stage-1 map = 0%,  reduce = 0%
+2017-04-16 08:41:51,676 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.29 sec
+2017-04-16 08:41:52,684 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.29 sec
+2017-04-16 08:41:53,696 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.29 sec
+2017-04-16 08:41:54,704 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.29 sec
+2017-04-16 08:41:55,718 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.29 sec
+2017-04-16 08:41:56,729 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 0.29 sec
+2017-04-16 08:41:57,737 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 0.29 sec
+MapReduce Total cumulative CPU time: 290 msec
+Ended Job = job_201704160624_0010
+MapReduce Jobs Launched:
+Job 0: Map: 1   Cumulative CPU: 0.29 sec   HDFS Read: 308 HDFS Write: 61 SUCCESS
+Total MapReduce CPU Time Spent: 290 msec
+OK
+ravi    123     456     camebridgestreet        uk
+ramesh  456     789     Dolanway        USA
+Time taken: 19.953 seconds
+hive>
+
+
+
+
+
